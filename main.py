@@ -15,15 +15,15 @@ AMQP_PORT = int(os.getenv('AMQP_PORT'))
 # Создание параметров подключения
 credentials = pika.PlainCredentials(AMQP_USER, AMQP_PASSWORD)
 parameters = pika.ConnectionParameters(AMQP_ADDRESS, AMQP_PORT, AMQP_VHOST, credentials)
-# connection = pika.BlockingConnection(parameters)
-# channel = connection.channel()
-# channel.queue_declare(queue='0', durable=True)
+
 # Попытка установить соединение с RabbitMQ
 try:
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
 
     # Ваш код для работы с каналом и обменом сообщениями
+
+    print("Успешное подключение к RabbitMQ!")
 
 except pika.exceptions.AMQPConnectionError as e:
     print(f"Ошибка подключения к RabbitMQ: {e}")
