@@ -1,0 +1,33 @@
+# PyCharm
+.idea/
+
+# Virtual Environment
+venv/
+__pycache__/
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Caches
+*.pyc
+__pycache__/
+.cache/
+
+# Distribution / packaging
+dist/
+build/
+eggs/
+*.egg-info/
+
+# Python Installer
+*.manifest
+*.spec
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
