@@ -9,4 +9,4 @@ services:
       - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD}
       - RABBITMQ_DEFAULT_VHOST=${AMQP_VHOST}
     ports:
-      - ${AMQP_PORT}:15672
+      - ${AMQP_PORT}:5672
