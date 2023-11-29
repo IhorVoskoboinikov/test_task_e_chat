@@ -9,7 +9,7 @@ services:
       - .env
     depends_on:
       - rabbitmq
-    command: ["python", "main.py"]
+    command: sh -c "sleep 20 && python main.py"
 
   rabbitmq:
     image: rabbitmq:3.10.7-management
@@ -21,8 +21,3 @@ services:
       - RABBITMQ_DEFAULT_VHOST=${AMQP_VHOST}
     ports:
       - ${AMQP_PORT}:5672
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "ping" ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
