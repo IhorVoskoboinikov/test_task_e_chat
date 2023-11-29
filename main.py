@@ -1,31 +1,30 @@
-import os
-import pika
+import threading
 
-# Загрузка переменных окружения из файла .env
-from dotenv import load_dotenv
-load_dotenv()
-
-# Получение настроек для подключения к RabbitMQ
-AMQP_USER = os.getenv('AMQP_USER')
-AMQP_PASSWORD = os.getenv('AMQP_PASSWORD')
-AMQP_ADDRESS = os.getenv('AMQP_ADDRESS')
-AMQP_VHOST = os.getenv('AMQP_VHOST')
-AMQP_PORT = int(os.getenv('AMQP_PORT'))
-
-# Создание параметров подключения
-credentials = pika.PlainCredentials(AMQP_USER, AMQP_PASSWORD)
-parameters = pika.ConnectionParameters(AMQP_ADDRESS, AMQP_PORT, AMQP_VHOST, credentials)
-
-# Попытка установить соединение с RabbitMQ
-try:
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
-
-    # Ваш код для работы с каналом и обменом сообщениями
-
-    print("Успешное подключение к RabbitMQ!")
-
-except pika.exceptions.AMQPConnectionError as e:
-    print(f"Ошибка подключения к RabbitMQ: {e}")
+from bot_run import bot, get_last_message
+from queue_producer import QueueProducer
 
 
+def callback(ch, method, properties, body):
+    body = body.decode('utf-8')
+    if body == "send":
+        print(f" [queue] Received from RabbitMQ: {body}")
+    elif body == "print":
+        print(f" [queue] Received from RabbitMQ: {body}. Last message from chat bot: {get_last_message()}")
+    else:
+        print("error!")
+
+
+conn = QueueProducer()
+conn.open_connection()
+conn.basic_consume(callback)
+
+if __name__ == "__main__":
+    tr_1 = threading.Thread(target=bot.polling, kwargs={"none_stop": True})
+    tr_2 = threading.Thread(target=conn.channel.start_consuming)
+    print(' [queue] Waiting for messages from RabbitMQ.')
+
+    tr_1.start()
+    tr_2.start()
+
+    tr_1.join()
+    tr_2.join()
