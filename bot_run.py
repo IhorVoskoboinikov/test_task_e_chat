@@ -12,12 +12,12 @@ bot = telebot.TeleBot(TOKEN)
 last_message = None
 
 
-def get_last_message():
+def get_last_message() -> str | None:
     return last_message
 
 
 @bot.message_handler(commands=["start"])
-def inline(message):
+def inline(message) -> None:
     bot.send_message(
         message.chat.id,
         " [chat_bot] Welcome to our telegram bot! \n\nYou can send messages to the chat bot!"
@@ -25,7 +25,7 @@ def inline(message):
 
 
 @bot.message_handler(content_types=["text"])
-def handle_text_messages(message):
+def handle_text_messages(message) -> None:
     global last_message
     last_message = message.text
     print(f" [chat_bot] Chat bot received message from: ID - {message.chat.id}! Message: {last_message}")
