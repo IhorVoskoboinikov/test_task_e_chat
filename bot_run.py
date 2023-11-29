@@ -6,17 +6,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
-print(TOKEN, '.....')
+print(' [chat_bot] Chat Bot is running...')
 bot = telebot.TeleBot(TOKEN)
 
 last_message = None
+
+
+def get_last_message():
+    return last_message
 
 
 @bot.message_handler(commands=["start"])
 def inline(message):
     bot.send_message(
         message.chat.id,
-        "Welcome to our telegram bot! \n\nYou can send messages to the chat bot!"
+        " [chat_bot] Welcome to our telegram bot! \n\nYou can send messages to the chat bot!"
     )
 
 
@@ -24,7 +28,7 @@ def inline(message):
 def handle_text_messages(message):
     global last_message
     last_message = message.text
-    print(f"Chat bot received message from: ID - {message.chat.id}!\nMessage: {last_message}")
+    print(f" [chat_bot] Chat bot received message from: ID - {message.chat.id}! Message: {last_message}")
 
 
 if __name__ == '__main__':
