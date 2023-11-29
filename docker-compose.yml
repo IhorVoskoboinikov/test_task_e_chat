@@ -1,5 +1,16 @@
 version: "2.1"
 services:
+  app:
+    tty: true
+    build:
+      context: .
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    command: ["python", "main.py"]
+
   rabbitmq:
     image: rabbitmq:3.10.7-management
     hostname: rabbitmq
@@ -10,3 +21,8 @@ services:
       - RABBITMQ_DEFAULT_VHOST=${AMQP_VHOST}
     ports:
       - ${AMQP_PORT}:5672
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
