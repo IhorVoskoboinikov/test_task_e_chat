@@ -15,7 +15,7 @@ class QueueProducer:
         self.queue_name = '0'
         self.channel = None
 
-    def open_connection(self):
+    def open_connection(self) -> None:
         credentials = pika.PlainCredentials(self.amqp_user, self.amqp_password)
         parameters = pika.ConnectionParameters(self.amqp_address, self.amqp_port, self.amqp_vhost, credentials)
 
@@ -28,5 +28,5 @@ class QueueProducer:
         self.channel.basic_publish(exchange='', routing_key=self.queue_name, body=message)
         print(f" [x] Sent '{message}'")
 
-    def basic_consume(self, callback):
+    def basic_consume(self, callback) -> None:
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
