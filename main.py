@@ -1,5 +1,7 @@
 import os
 import threading
+from typing import Any
+
 import requests
 import json
 
@@ -7,7 +9,7 @@ import bot
 from queue_producer import QueueProducer
 
 
-def send_last_message(last_message, body):
+def send_last_message(last_message: str, body: str) -> None:
     print(f" [queue] Received from RabbitMQ: {body}")
 
     external_api_url = os.getenv('EXTERNAL_API_URL')
@@ -26,11 +28,11 @@ def send_last_message(last_message, body):
         print(" [queue] EXTERNAL_API_URL is not defined in the environment variables.")
 
 
-def print_last_message(last_message, body):
+def print_last_message(last_message: str, body: str) -> None:
     print(f" [queue] Received from RabbitMQ: {body}. Last message from chat bot: {last_message}")
 
 
-def callback(ch, method, properties, body) -> None:
+def callback(ch: Any, method: Any, properties: Any, body: bytes) -> None:
     body = body.decode('utf-8')
     last_message = bot.last_message
 
