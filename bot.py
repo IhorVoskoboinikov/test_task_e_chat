@@ -31,5 +31,9 @@ def handle_text_messages(message) -> None:
     print(f" [chat_bot] Chat bot received message from: ID - {message.chat.id}! Message: {last_message}")
 
 
+def bot_run():
+    bot.polling(none_stop=True)
+
+
 if __name__ == '__main__':
     bot.polling(none_stop=True)
