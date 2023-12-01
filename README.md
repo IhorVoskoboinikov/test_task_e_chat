@@ -21,3 +21,5 @@ cooks, and dish types in a restaurant kitchen.
 > 2. You can add the commands in queue manually by running the file producer.py
      (for this you will need to install python and run command: ```python producer.py``` )
 > 3. When you send command in queue you can see result in console
+> 4. For test POST requests you can run local server test_api.py
+     (for this you will need to install python and run command: ```python test_api.py``` )
