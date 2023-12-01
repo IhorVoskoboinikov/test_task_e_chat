@@ -1,11 +1,13 @@
 import os
-import pika
+from typing import Callable
+
+import aio_pika
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-class QueueProducer:
+class AsyncQueueProducer:
     def __init__(self) -> None:
         self.amqp_user = os.getenv('AMQP_USER')
         self.amqp_password = os.getenv('AMQP_PASSWORD')
@@ -15,18 +17,22 @@ class QueueProducer:
         self.queue_name = '0'
         self.channel = None
 
-    def open_connection(self) -> None:
-        credentials = pika.PlainCredentials(self.amqp_user, self.amqp_password)
-        parameters = pika.ConnectionParameters(self.amqp_address, self.amqp_port, self.amqp_vhost, credentials)
+    async def open_connection(self) -> None:
+        connection = await aio_pika.connect_robust(
+            f"amqp://{self.amqp_user}:{self.amqp_password}@{self.amqp_address}:{self.amqp_port}/{self.amqp_vhost}",
+        )
+        self.channel = await connection.channel()
+        await self.channel.set_qos(prefetch_count=100)
 
-        connection = pika.BlockingConnection(parameters)
-        self.channel = connection.channel()
+        await self.channel.declare_queue(self.queue_name, durable=True)
 
-        self.channel.queue_declare(queue=self.queue_name, durable=True)
-
-    def add_to_queue(self, message: str) -> None:
-        self.channel.basic_publish(exchange='', routing_key=self.queue_name, body=message)
+    async def add_to_queue(self, message: str) -> None:
+        await self.channel.default_exchange.publish(
+            aio_pika.Message(body=message.encode()),
+            routing_key=self.queue_name
+        )
         print(f" [x] Sent '{message}'")
 
-    def basic_consume(self, callback) -> None:
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
+    async def basic_consume(self, callback: Callable) -> None:
+        queue = await self.channel.declare_queue(self.queue_name, durable=True)
+        await queue.consume(callback)
