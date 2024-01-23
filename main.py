@@ -70,7 +70,8 @@ async def queue_run() -> None:
     try:
         await asyncio.Future()
     finally:
-        await connection.close()
+        if connection:
+            await connection.close()
 
 
 async def main():
