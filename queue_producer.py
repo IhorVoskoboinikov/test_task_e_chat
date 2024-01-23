@@ -17,7 +17,7 @@ class AsyncQueueProducer:
         self.queue_name = '0'
         self.channel = None
 
-    async def open_connection(self) -> None:
+    async def open_connection(self):
         connection = await aio_pika.connect_robust(
             f"amqp://{self.amqp_user}:{self.amqp_password}@{self.amqp_address}:{self.amqp_port}/{self.amqp_vhost}",
         )
@@ -25,6 +25,8 @@ class AsyncQueueProducer:
         await self.channel.set_qos(prefetch_count=100)
 
         await self.channel.declare_queue(self.queue_name, durable=True)
+
+        return connection
 
     async def add_to_queue(self, message: str) -> None:
         await self.channel.default_exchange.publish(
